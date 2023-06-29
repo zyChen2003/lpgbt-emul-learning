@@ -61,7 +61,7 @@ module upLinkFECEncoder(
   wire [144:0] FEC5virtFrame_C1;
 
   assign FEC5virtFrame_C0 = (drMode) ? {26'd0, dataFec5[233:232], dataFec5[116:0]} : {29'd0, dataFec5[115:0]};
-  assign FEC5virtFrame_C1 = {29'd0, dataFec5[231:117]};
+  assign FEC5virtFrame_C1 = {30'd0, dataFec5[231:117]};
 
 
   rs_encoder_N31K29 FEC5_C0 (.msg(FEC5virtFrame_C0), .parity(fec5[9:0])); 
