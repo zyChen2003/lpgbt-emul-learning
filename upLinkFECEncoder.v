@@ -17,6 +17,8 @@
  *******************************************************************************
  *
  *  file: upLinkFECEncoder.v
+ * 文件：upLinkFECEncoder.v
+ * 功能：Reed-Solomon前向纠错编码
  *
  *  upLinkFECEncoder
  * 
@@ -32,6 +34,8 @@
  * 
  **/
 
+// 上行链路FEC编码器
+// Reed-Solomon前向纠错编码
 module upLinkFECEncoder(
 	// input data:
 	input [233:0]  dataFec5,

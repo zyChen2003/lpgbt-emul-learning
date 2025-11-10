@@ -16,6 +16,8 @@
  *******************************************************************************
  *
  *  file: downLinkFECDecoder.v
+ * 文件：downLinkFECDecoder.v
+ * 功能：Reed-Solomon错误检测和纠正
  *
  *  downLinkFECDecoder
  *
@@ -25,6 +27,8 @@
  *  2017/04/03 Eduardo Brandao de Souza Mendes  : Removed error correction counter from this level for FPGA impl.
  **/
 
+// 下行链路FEC解码器
+// Reed-Solomon错误检测和纠正
 module downLinkFECDecoder (
     input             clk,
     input             bypass,

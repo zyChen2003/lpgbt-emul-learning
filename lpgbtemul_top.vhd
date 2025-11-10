@@ -227,27 +227,33 @@ begin                 --========####   Architecture Body   ####========--
     end process;
    
     -- Pattern aligner
+    -- 模式对齐器
+    -- 功能：检测帧头模式并生成位滑动控制信号以实现帧对齐
+    -- Function: Detects frame header pattern and generates bit-slip control for frame alignment
     mgt_framealigner_inst: entity work.mgt_framealigner
         GENERIC map (
-            c_wordRatio                      => 8,
-            c_headerPattern                  => x"F00F",
-            c_wordSize                       => 32,
-            c_allowedFalseHeader             => 32,
-            c_allowedFalseHeaderOverN        => 40,
-            c_requiredTrueHeader             => 30,
-            c_bitslip_mindly                 => rxslide_pulse_duration,
-            c_bitslip_waitdly                => rxslide_pulse_delay
+            c_wordRatio                      => 8,                          -- 字比率 / Word ratio
+            c_headerPattern                  => x"F00F",                    -- 帧头模式 / Header pattern
+            c_wordSize                       => 32,                         -- 字大小（位）/ Word size (bits)
+            c_allowedFalseHeader             => 32,                         -- 允许的错误帧头数 / Allowed false headers
+            c_allowedFalseHeaderOverN        => 40,                         -- N 次中允许的错误帧头数 / Allowed false headers over N
+            c_requiredTrueHeader             => 30,                         -- 锁定所需的正确帧头数 / Required true headers for lock
+            c_bitslip_mindly                 => rxslide_pulse_duration,     -- 位滑动最小延迟 / Bit-slip minimum delay
+            c_bitslip_waitdly                => rxslide_pulse_delay         -- 位滑动等待延迟 / Bit-slip wait delay
 
         )
         PORT map (     
             -- Clock(s)
-            clk_pcsRx_i                      => clk_mgtRxUsrclk_s,
+            -- 时钟
+            clk_pcsRx_i                      => clk_mgtRxUsrclk_s,          -- PCS 接收时钟 / PCS RX clock
             
             -- Reset(s)
-            rst_pattsearch_i                 => rst_pattsearch_s,
+            -- 复位
+            rst_pattsearch_i                 => rst_pattsearch_s,           -- 模式搜索复位 / Pattern search reset
             
             -- Control
-            cmd_bitslipCtrl_o                => ctr_clkSlip_s,
+            -- 控制
+            cmd_bitslipCtrl_o                => ctr_clkSlip_s,              -- 位滑动控制输出 / Bit-slip control output
             
             -- Status
             sta_headerLocked_o               => sta_headeLocked_s,

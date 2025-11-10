@@ -16,6 +16,8 @@
  *******************************************************************************
  *
  *  file: downLinkDeinterleaver.v
+ * 文件：downLinkDeinterleaver.v
+ * 功能：反向位交织操作
  *
  *  downLinkDeinterleaver
  *
@@ -25,6 +27,8 @@
  * 
  **/
 
+// 下行链路解交织器
+// 反向位交织操作
 module downLinkDeinterleaver (
     input         bypass,
     input  [63:0] downLinkFrame,
