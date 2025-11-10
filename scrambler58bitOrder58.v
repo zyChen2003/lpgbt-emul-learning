@@ -1,5 +1,7 @@
 /* Module: scrambler58bitOrder58                                        */
+/* 模块：58位加扰器，58阶 */
 /* Created: Paulo Moreira, 2015/09/15                                        */
+/* 创建者：Paulo Moreira，CERN */
 /* 2016/05/30 Kulis : Test partterns removed                                 */
 /*                    (moved to test pattern generator block)                */
 /* Institute: CERN                                                           */

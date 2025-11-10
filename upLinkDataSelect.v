@@ -16,6 +16,8 @@
  *******************************************************************************
  *
  *  file: upLinkDataSelect.v
+ * 文件：upLinkDataSelect.v
+ * 功能：根据FEC模式和数据速率选择和格式化输入数据
  *
  *  upLinkDataSelect
  *
@@ -31,6 +33,8 @@
  *  2020/08/24 EBSM    : Removed clock input
  **/
 
+// 上行链路数据选择器
+// 根据FEC模式和数据速率选择和格式化输入数据
 module upLinkDataSelect(
 
     // input data:

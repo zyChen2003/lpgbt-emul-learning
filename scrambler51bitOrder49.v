@@ -1,5 +1,7 @@
 /* Module: scrambler51bitOrder49                                             */ 
+/* 模块：51位加扰器，49阶 */
 /* Created: Paulo Moreira, 2015/09/18                                        */
+/* 创建者：Paulo Moreira，CERN */
 /* Modified: José Fonseca, 2016/10/21                                        */
 /* 2016/05/30 Kulis : Test partterns removed                                 */
 /*                    (moved to test pattern generator block)                */

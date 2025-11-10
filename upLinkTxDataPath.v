@@ -16,10 +16,13 @@
  *******************************************************************************
  *
  *  file: upLinkTxDataPath.v
+ *  文件：upLinkTxDataPath.v
  *
  *  upLinkTxDataPath
+ *  上行链路发送数据路径 - 处理用户数据并生成经过加扰、FEC编码和交织的上行链路帧
  *
  *  Controll signals :
+ *  控制信号：
  *  txDataRate:
  *    ‘0’ - 5.12 Gb/s
  *    ‘1’ - 10.24 Gb/s
@@ -38,7 +41,8 @@
 
 module upLinkTxDataPath (
     // input cloks:
-    input          clk,
+    // 输入时钟：
+    input          clk,              // 时钟信号 / Clock signal
 
     // input data:
 	input          dataEnable,	

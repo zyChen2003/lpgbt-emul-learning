@@ -17,6 +17,8 @@
  *******************************************************************************
  *
  *  file: upLinkScrambler.v
+ * 文件：upLinkScrambler.v
+ * 功能：应用多项式加扰以实现直流平衡
  *
  *  upLinkScrambler
  * 
@@ -32,6 +34,8 @@
  * 
  **/
 
+// 上行链路加扰器
+// 应用多项式加扰以实现直流平衡
 module upLinkScrambler(
     // input clocks:
     input          clk,

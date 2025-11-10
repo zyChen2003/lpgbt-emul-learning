@@ -15,9 +15,11 @@
  *                                                                             *
  *******************************************************************************
  *
- *  file: downLinkDeinterleaver.v
+ *  file: downLinkRxDataPath.v
+ *  文件：downLinkRxDataPath.v
  *
- *  downLinkDeinterleaver
+ *  downLinkRxDataPath - 下行链路接收数据路径
+ *  功能：处理接收的数据，执行解交织、FEC解码和解扰操作
  *
  *  History:
  *  2016/05/20 Szymon Kulis    : Created
@@ -28,12 +30,15 @@
 
 module downLinkRxDataPath (
     // Clocks inputs:
+    // 时钟输入：
     input         clk,
 
     // data input
+    // 数据输入
     input  [63:0] downLinkFrame,
 
     // data outputs
+    // 数据输出
 	output reg    dataStrobe,
     output [31:0] dataOut,
     output [1:0]  dataEC,
@@ -41,12 +46,14 @@ module downLinkRxDataPath (
     output [3:0]  header,
 
     // control signals
+    // 控制信号
 	input         dataEnable,
     input         bypassDeinterleaver,
     input         bypassFECDecoder,
     input         bypassDescrambler,
 
     // -- fec error corrected --
+    // -- FEC 错误纠正计数 --
     output reg [15:0] fecCorrectionCount
     );
 

@@ -16,6 +16,8 @@
  *******************************************************************************
  *
  *  file: upLinkInterleaver.v
+ * 文件：upLinkInterleaver.v
+ * 功能：位交织以分散突发错误
  *
  *  upLinkInterleaver
  *
@@ -25,6 +27,8 @@
  * 
  **/
 
+// 上行链路交织器
+// 位交织以分散突发错误
 module upLinkInterleaver (
     // input data (and fec codes)
     input [233:0]  dataFec5,

@@ -1,4 +1,5 @@
 -- IEEE VHDL standard library:
+-- IEEE VHDL 标准库
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -7,48 +8,59 @@ use ieee.numeric_std.all;
 --=================================================================================================--
 --#######################################   Entity   ##############################################--
 --=================================================================================================--
+--=========================================  实体定义  ============================================--
 
+-- lpGBT 模拟器顶层模块
+-- lpGBT Emulator Top Module
+-- 功能：实现完整的 lpGBT 上行链路（TX）和下行链路（RX）数据路径
+-- Function: Implements complete lpGBT uplink (TX) and downlink (RX) data paths
 entity lpgbtemul_top is
     generic(
         -- MGT-specific parameters
-        -- Read your MGT user guide before connecting them		
-        rxslide_pulse_duration : integer:= 2;  -- Duration of GT_RXSLIDE_OUT pulse
-        rxslide_pulse_delay    : integer:= 128 -- Minimum time between two GT_RXSLIDE_OUT pulses
+        -- MGT 特定参数
+        -- Read your MGT user guide before connecting them
+        -- 连接前请阅读您的 MGT 用户指南
+        rxslide_pulse_duration : integer:= 2;  -- Duration of GT_RXSLIDE_OUT pulse / GT_RXSLIDE_OUT 脉冲持续时间
+        rxslide_pulse_delay    : integer:= 128 -- Minimum time between two GT_RXSLIDE_OUT pulses / 两个 GT_RXSLIDE_OUT 脉冲之间的最小时间
     );
     port(            
         -- DownLink
-        downlinkClkEn_o    : out std_logic; 
-        downLinkDataGroup0 : out std_logic_vector(15 downto 0);
-        downLinkDataGroup1 : out std_logic_vector(15 downto 0);
-        downLinkDataEc     : out std_logic_vector(1 downto 0);
-        downLinkDataIc     : out std_logic_vector(1 downto 0);
-        downlinkRdy_o      : out std_logic;
+        -- 下行链路（接收路径）
+        downlinkClkEn_o    : out std_logic;                      -- 下行链路时钟使能输出 / Downlink clock enable output
+        downLinkDataGroup0 : out std_logic_vector(15 downto 0);  -- 下行链路数据组0（16位）/ Downlink data group 0 (16-bit)
+        downLinkDataGroup1 : out std_logic_vector(15 downto 0);  -- 下行链路数据组1（16位）/ Downlink data group 1 (16-bit)
+        downLinkDataEc     : out std_logic_vector(1 downto 0);   -- 下行链路 EC（错误纠正）位 / Downlink EC (Error Correction) bits
+        downLinkDataIc     : out std_logic_vector(1 downto 0);   -- 下行链路 IC（内部控制）位 / Downlink IC (Internal Control) bits
+        downlinkRdy_o      : out std_logic;                      -- 下行链路就绪信号 / Downlink ready signal
                            
-        -- Uplink          
-        uplinkClkEn_i      : in  std_logic;
-        upLinkData0        : in  std_logic_vector(31 downto 0);
-        upLinkData1        : in  std_logic_vector(31 downto 0);
-        upLinkData2        : in  std_logic_vector(31 downto 0);
-        upLinkData3        : in  std_logic_vector(31 downto 0);
-        upLinkData4        : in  std_logic_vector(31 downto 0);
-        upLinkData5        : in  std_logic_vector(31 downto 0);
-        upLinkData6        : in  std_logic_vector(31 downto 0);
-        upLinkDataIC       : in  std_logic_vector(1 downto 0);
-        upLinkDataEC       : in  std_logic_vector(1 downto 0);
-        uplinkRdy_o        : out std_logic;
+        -- Uplink
+        -- 上行链路（发送路径）
+        uplinkClkEn_i      : in  std_logic;                      -- 上行链路时钟使能输入 / Uplink clock enable input
+        upLinkData0        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组0（32位）/ Uplink data group 0 (32-bit)
+        upLinkData1        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组1（32位）/ Uplink data group 1 (32-bit)
+        upLinkData2        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组2（32位）/ Uplink data group 2 (32-bit)
+        upLinkData3        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组3（32位）/ Uplink data group 3 (32-bit)
+        upLinkData4        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组4（32位）/ Uplink data group 4 (32-bit)
+        upLinkData5        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组5（32位）/ Uplink data group 5 (32-bit)
+        upLinkData6        : in  std_logic_vector(31 downto 0);  -- 上行链路数据组6（32位）/ Uplink data group 6 (32-bit)
+        upLinkDataIC       : in  std_logic_vector(1 downto 0);   -- 上行链路 IC 位 / Uplink IC bits
+        upLinkDataEC       : in  std_logic_vector(1 downto 0);   -- 上行链路 EC 位 / Uplink EC bits
+        uplinkRdy_o        : out std_logic;                      -- 上行链路就绪信号 / Uplink ready signal
                            
-        -- Uplink mode     
-        fecMode            : in  std_logic; -- 0=FEC5, 1=FEC12
-        txDataRate         : in  std_logic; -- 1=5G  , 2=10G
+        -- Uplink mode
+        -- 上行链路模式配置
+        fecMode            : in  std_logic; -- 0=FEC5, 1=FEC12 / FEC 模式选择：0=FEC5，1=FEC12
+        txDataRate         : in  std_logic; -- 1=5G  , 2=10G / 发送数据速率：0=5.12Gb/s，1=10.24Gb/s
 
-		-- Transceiver     
-        GT_RXUSRCLK_IN     : in  std_logic;
-        GT_TXUSRCLK_IN     : in  std_logic;
-        GT_RXSLIDE_OUT     : out std_logic;    
-        GT_TXREADY_IN      : in  std_logic;
-        GT_RXREADY_IN      : in  std_logic;
-        GT_TXDATA_OUT      : out std_logic_vector(31 downto 0);
-        GT_RXDATA_IN       : in  std_logic_vector(31 downto 0)
+        -- Transceiver
+        -- 收发器接口（MGT - Multi-Gigabit Transceiver）
+        GT_RXUSRCLK_IN     : in  std_logic;                      -- MGT 接收用户时钟输入 / MGT RX user clock input
+        GT_TXUSRCLK_IN     : in  std_logic;                      -- MGT 发送用户时钟输入 / MGT TX user clock input
+        GT_RXSLIDE_OUT     : out std_logic;                      -- MGT 位滑动控制输出（用于帧对齐）/ MGT bit-slip control output (for frame alignment)
+        GT_TXREADY_IN      : in  std_logic;                      -- MGT 发送就绪输入 / MGT TX ready input
+        GT_RXREADY_IN      : in  std_logic;                      -- MGT 接收就绪输入 / MGT RX ready input
+        GT_TXDATA_OUT      : out std_logic_vector(31 downto 0);  -- MGT 32位发送数据输出 / MGT 32-bit TX data output
+        GT_RXDATA_IN       : in  std_logic_vector(31 downto 0)   -- MGT 32位接收数据输入 / MGT 32-bit RX data input
 
     ); 
 end lpgbtemul_top;
@@ -56,46 +68,49 @@ end lpgbtemul_top;
 --=================================================================================================--
 --####################################   Architecture   ###########################################-- 
 --=================================================================================================--
+--=========================================  架构实现  ============================================--
 
 architecture behavioral of lpgbtemul_top is
 
-    -- Downlink    
-    signal dat_downLinkWord_fromMgt_s           : std_logic_vector(31 downto 0);
-    signal sta_mgtRxRdy_s                       : std_logic;
-    signal rst_pattsearch_s                     : std_logic;
-    signal ctr_clkSlip_s                        : std_logic;
-    signal sta_headeLocked_s                    : std_logic;
-    signal sta_headerFlag_s                     : std_logic;
-    signal sta_rxgbxRdy_s                       : std_logic;
-    signal rst_datapath_s                       : std_logic;
-    signal dat_downLinkWord_fromGb_s            : std_logic_vector(255 downto 0);
-    signal dat_downLinkWord_fromGbInv_s         : std_logic_vector(63 downto 0);
-    signal dat_downLinkWord_toPattSrch_s        : std_logic_vector(15 downto 0);
-    signal clk_mgtRxUsrclk_s                    : std_logic;
-    signal downlinkRdy_s0                       : std_logic;
-    signal downlinkRdy_s1                       : std_logic;
-    signal RX_CLKEn_s                           : std_logic;
-    signal downLinkDataIc_s                     : std_logic_vector(1 downto 0);
-    signal downLinkDataEc_s                     : std_logic_vector(1 downto 0);
-    signal downLinkDataGroup1_s                 : std_logic_vector(15 downto 0);
-    signal downLinkDataGroup0_s                 : std_logic_vector(15 downto 0);
-    signal clk_dataFlag_rxGb_s                  : std_logic;
+    -- Downlink
+    -- 下行链路内部信号定义
+    signal dat_downLinkWord_fromMgt_s           : std_logic_vector(31 downto 0);  -- 来自 MGT 的下行链路数据字 / Downlink word from MGT
+    signal sta_mgtRxRdy_s                       : std_logic;                      -- MGT 接收就绪状态 / MGT RX ready status
+    signal rst_pattsearch_s                     : std_logic;                      -- 模式搜索复位信号 / Pattern search reset
+    signal ctr_clkSlip_s                        : std_logic;                      -- 时钟滑动控制 / Clock slip control
+    signal sta_headeLocked_s                    : std_logic;                      -- 帧头锁定状态 / Header locked status
+    signal sta_headerFlag_s                     : std_logic;                      -- 帧头标志 / Header flag
+    signal sta_rxgbxRdy_s                       : std_logic;                      -- 接收变速箱就绪 / RX gearbox ready
+    signal rst_datapath_s                       : std_logic;                      -- 数据路径复位 / Datapath reset
+    signal dat_downLinkWord_fromGb_s            : std_logic_vector(255 downto 0); -- 来自变速箱的下行链路字 / Downlink word from gearbox
+    signal dat_downLinkWord_fromGbInv_s         : std_logic_vector(63 downto 0);  -- 变速箱输出的反相数据 / Inverted gearbox output
+    signal dat_downLinkWord_toPattSrch_s        : std_logic_vector(15 downto 0);  -- 送往模式搜索的数据 / Data to pattern search
+    signal clk_mgtRxUsrclk_s                    : std_logic;                      -- MGT 接收用户时钟 / MGT RX user clock
+    signal downlinkRdy_s0                       : std_logic;                      -- 下行链路就绪寄存器0 / Downlink ready register 0
+    signal downlinkRdy_s1                       : std_logic;                      -- 下行链路就绪寄存器1 / Downlink ready register 1
+    signal RX_CLKEn_s                           : std_logic;                      -- 接收时钟使能 / RX clock enable
+    signal downLinkDataIc_s                     : std_logic_vector(1 downto 0);   -- 下行链路 IC 数据 / Downlink IC data
+    signal downLinkDataEc_s                     : std_logic_vector(1 downto 0);   -- 下行链路 EC 数据 / Downlink EC data
+    signal downLinkDataGroup1_s                 : std_logic_vector(15 downto 0);  -- 下行链路数据组1 / Downlink data group 1
+    signal downLinkDataGroup0_s                 : std_logic_vector(15 downto 0);  -- 下行链路数据组0 / Downlink data group 0
+    signal clk_dataFlag_rxGb_s                  : std_logic;                      -- 接收变速箱数据标志 / RX gearbox data flag
 
     -- Uplink
-    signal clk_mgtTxUsrclk_s                    : std_logic;
-    signal sta_mgtTxRdy_s                       : std_logic;
-    signal uplinkClkEn_shgb_s                   : std_logic;
-    signal sta_txGbRdy_s                        : std_logic;
-    signal dat_upLinkWord_fromLpGBT_s           : std_logic_vector(255 downto 0);
-    signal dat_upLinkWord_fromLpGBT_pipeline_s  : std_logic_vector(255 downto 0);
-    signal dat_upLinkWord_toGb_s                : std_logic_vector(255 downto 0);
-    signal dat_upLinkWord_toGb_pipeline_s       : std_logic_vector(255 downto 0);
-    signal dat_upLinkWord_fromGb_s              : std_logic_vector(31 downto 0);
-    signal rst_uplinkGb_s                       : std_logic;
-    signal rst_uplinkGb_synch_s                 : std_logic;
-    signal rst_uplinkMgt_s                      : std_logic;
-    signal rst_uplinkInitDone_s                 : std_logic;
-    signal rst_downlinkInitDone_s               : std_logic;
+    -- 上行链路内部信号定义
+    signal clk_mgtTxUsrclk_s                    : std_logic;                      -- MGT 发送用户时钟 / MGT TX user clock
+    signal sta_mgtTxRdy_s                       : std_logic;                      -- MGT 发送就绪状态 / MGT TX ready status
+    signal uplinkClkEn_shgb_s                   : std_logic;                      -- 上行链路变速箱时钟使能 / Uplink gearbox clock enable
+    signal sta_txGbRdy_s                        : std_logic;                      -- 发送变速箱就绪 / TX gearbox ready
+    signal dat_upLinkWord_fromLpGBT_s           : std_logic_vector(255 downto 0); -- 来自 lpGBT 数据路径的上行链路字 / Uplink word from lpGBT datapath
+    signal dat_upLinkWord_fromLpGBT_pipeline_s  : std_logic_vector(255 downto 0); -- lpGBT 数据流水线寄存器 / lpGBT data pipeline register
+    signal dat_upLinkWord_toGb_s                : std_logic_vector(255 downto 0); -- 送往变速箱的上行链路字 / Uplink word to gearbox
+    signal dat_upLinkWord_toGb_pipeline_s       : std_logic_vector(255 downto 0); -- 变速箱输入流水线寄存器 / Gearbox input pipeline register
+    signal dat_upLinkWord_fromGb_s              : std_logic_vector(31 downto 0);  -- 来自变速箱的上行链路字 / Uplink word from gearbox
+    signal rst_uplinkGb_s                       : std_logic;                      -- 上行链路变速箱复位 / Uplink gearbox reset
+    signal rst_uplinkGb_synch_s                 : std_logic;                      -- 上行链路变速箱同步复位 / Uplink gearbox synchronous reset
+    signal rst_uplinkMgt_s                      : std_logic;                      -- 上行链路 MGT 复位 / Uplink MGT reset
+    signal rst_uplinkInitDone_s                 : std_logic;                      -- 上行链路初始化完成 / Uplink initialization done
+    signal rst_downlinkInitDone_s               : std_logic;                      -- 下行链路初始化完成 / Downlink initialization done
     signal upLinkData0_s                        : std_logic_vector(31 downto 0);
     signal upLinkData1_s                        : std_logic_vector(31 downto 0);
     signal upLinkData2_s                        : std_logic_vector(31 downto 0);
@@ -150,19 +165,25 @@ architecture behavioral of lpgbtemul_top is
     end component;
 
                 
-begin                 --========####   Architecture Body   ####========-- 
+begin                 --========####   Architecture Body   ####========--
+                      --========####     架构主体      ####========--
 
-	---------------------------- Downlink ----------------------------
-    sta_mgtRxRdy_s             <= GT_RXREADY_IN         ;
-    rst_pattsearch_s           <= not(sta_mgtRxRdy_s)   ;
-    rst_datapath_s             <= not(sta_headeLocked_s);
+    ---------------------------- Downlink ----------------------------
+    ---------------------------- 下行链路 ----------------------------
+    -- 下行链路信号连接 / Downlink signal connections
+    sta_mgtRxRdy_s             <= GT_RXREADY_IN         ;  -- MGT 接收就绪状态 / MGT RX ready status
+    rst_pattsearch_s           <= not(sta_mgtRxRdy_s)   ;  -- 模式搜索复位（MGT 未就绪时复位）/ Pattern search reset (reset when MGT not ready)
+    rst_datapath_s             <= not(sta_headeLocked_s);  -- 数据路径复位（帧头未锁定时复位）/ Datapath reset (reset when header not locked)
 
-    clk_mgtRxUsrclk_s          <= GT_RXUSRCLK_IN        ;	
-    GT_RXSLIDE_OUT             <= ctr_clkSlip_s         ;    
-    dat_downLinkWord_fromMgt_s <= GT_RXDATA_IN          ;
+    clk_mgtRxUsrclk_s          <= GT_RXUSRCLK_IN        ;  -- MGT 接收时钟 / MGT RX clock
+    GT_RXSLIDE_OUT             <= ctr_clkSlip_s         ;  -- 位滑动控制输出 / Bit-slip control output
+    dat_downLinkWord_fromMgt_s <= GT_RXDATA_IN          ;  -- MGT 接收数据 / MGT RX data
 
 
     --Rdy process (delay from 1 clock)
+    --就绪处理进程（延迟1个时钟）
+    -- 功能：产生延迟的下行链路就绪信号，用于时序对齐
+    -- Function: Generate delayed downlink ready signal for timing alignment
     process(sta_rxgbxRdy_s, clk_mgtRxUsrclk_s)
     begin
         if sta_rxgbxRdy_s = '0' then
@@ -171,16 +192,19 @@ begin                 --========####   Architecture Body   ####========--
             downlinkRdy_s1 <= '0';
         elsif rising_edge(clk_mgtRxUsrclk_s) then
             if RX_CLKEn_s = '1' then
-                downlinkRdy_s0 <= '1';
-                downlinkRdy_s1 <= downlinkRdy_s0;
-                downlinkRdy_o  <= downlinkRdy_s1;
+                downlinkRdy_s0 <= '1';                      -- 第一级寄存器 / First stage register
+                downlinkRdy_s1 <= downlinkRdy_s0;           -- 第二级寄存器 / Second stage register
+                downlinkRdy_o  <= downlinkRdy_s1;           -- 输出寄存器 / Output register
             end if;
         end if;    
     end process;
 
     --! Multicycle path configuration (downlink)
+    --! 多周期路径配置（下行链路）
+    -- 功能：生成下行链路时钟使能信号，用于跨时钟域同步
+    -- Function: Generate downlink clock enable for clock domain crossing
     syncShiftRegDown_proc: process(sta_rxgbxRdy_s, clk_mgtRxUsrclk_s)
-        variable cnter  : integer range 0 to 7;
+        variable cnter  : integer range 0 to 7;  -- 计数器，用于产生时钟使能 / Counter for clock enable generation
     begin
     
         if sta_rxgbxRdy_s = '0' then
@@ -203,27 +227,33 @@ begin                 --========####   Architecture Body   ####========--
     end process;
    
     -- Pattern aligner
+    -- 模式对齐器
+    -- 功能：检测帧头模式并生成位滑动控制信号以实现帧对齐
+    -- Function: Detects frame header pattern and generates bit-slip control for frame alignment
     mgt_framealigner_inst: entity work.mgt_framealigner
         GENERIC map (
-            c_wordRatio                      => 8,
-            c_headerPattern                  => x"F00F",
-            c_wordSize                       => 32,
-            c_allowedFalseHeader             => 32,
-            c_allowedFalseHeaderOverN        => 40,
-            c_requiredTrueHeader             => 30,
-            c_bitslip_mindly                 => rxslide_pulse_duration,
-            c_bitslip_waitdly                => rxslide_pulse_delay
+            c_wordRatio                      => 8,                          -- 字比率 / Word ratio
+            c_headerPattern                  => x"F00F",                    -- 帧头模式 / Header pattern
+            c_wordSize                       => 32,                         -- 字大小（位）/ Word size (bits)
+            c_allowedFalseHeader             => 32,                         -- 允许的错误帧头数 / Allowed false headers
+            c_allowedFalseHeaderOverN        => 40,                         -- N 次中允许的错误帧头数 / Allowed false headers over N
+            c_requiredTrueHeader             => 30,                         -- 锁定所需的正确帧头数 / Required true headers for lock
+            c_bitslip_mindly                 => rxslide_pulse_duration,     -- 位滑动最小延迟 / Bit-slip minimum delay
+            c_bitslip_waitdly                => rxslide_pulse_delay         -- 位滑动等待延迟 / Bit-slip wait delay
 
         )
         PORT map (     
             -- Clock(s)
-            clk_pcsRx_i                      => clk_mgtRxUsrclk_s,
+            -- 时钟
+            clk_pcsRx_i                      => clk_mgtRxUsrclk_s,          -- PCS 接收时钟 / PCS RX clock
             
             -- Reset(s)
-            rst_pattsearch_i                 => rst_pattsearch_s,
+            -- 复位
+            rst_pattsearch_i                 => rst_pattsearch_s,           -- 模式搜索复位 / Pattern search reset
             
             -- Control
-            cmd_bitslipCtrl_o                => ctr_clkSlip_s,
+            -- 控制
+            cmd_bitslipCtrl_o                => ctr_clkSlip_s,              -- 位滑动控制输出 / Bit-slip control output
             
             -- Status
             sta_headerLocked_o               => sta_headeLocked_s,
